@@ -4,7 +4,7 @@
 VSYSTEM=${VSYSTEM:=qemu}					# Either 'qemu' or 'kvm'
 FLAVOUR=${FLAVOUR:=debian}					# Either 'debian' or 'ubuntu'
 INCLUDES=${INCLUDES:="less,vim,sudo,openssh-server,acpid"}
-MIRROR=${MIRROR:="http://ftp.hu.debian.org/debian"}
+MIRROR=${MIRROR:="http://ftp.tw.debian.org/debian"}
 #MIRROR=${MIRROR:="http://localhost:3142/debian"}
 #MIRROR=${MIRROR:="http://hu.archive.ubuntu.com/ubuntu/"}
 #MIRROR=${MIRROR:="http://localhost:3142/ubuntu"}
@@ -89,9 +89,11 @@ done
 
 echo "Connected $FILE to $DISK"
 
+# New sfdisk on stretch doesn't do -D and -uM anymore
 echo "Partitioning $DISK..."
-sfdisk $DISK -q -D -uM << EOF || fail "cannot partition $FILE"
-,200,83,*
+sfdisk $DISK -q << EOF || fail "cannot partition $FILE"
+label: dos
+,200M,83,*
 ;
 EOF
 

@@ -1,16 +1,20 @@
 #!/bin/bash
 
+set -e
+
 # Configs overwritable via environment variables
-VSYSTEM=${VSYSTEM:=qemu}					# Either 'qemu' or 'kvm'
+VSYSTEM=${VSYSTEM:=qemu}						# Either 'qemu' or 'kvm'
 FLAVOUR=${FLAVOUR:=debian}					# Either 'debian' or 'ubuntu'
 INCLUDES=${INCLUDES:="less,vim,sudo,openssh-server,acpid"}
-MIRROR=${MIRROR:="http://ftp.tw.debian.org/debian"}
+MIRROR=${MIRROR:="http://deb.debian.org/debian"}
 #MIRROR=${MIRROR:="http://localhost:3142/debian"}
-#MIRROR=${MIRROR:="http://hu.archive.ubuntu.com/ubuntu/"}
+#MIRROR=${MIRROR:="http://archive.ubuntu.com/ubuntu/"}
 #MIRROR=${MIRROR:="http://localhost:3142/ubuntu"}
 ARCH=${ARCH:=amd64}
 APT_CACHER=${APT_CACHER:=no}
 IMGSIZE=${IMGSIZE:=8G}
+ROOTPASSWD=${ROOTPASSWD:=root}
+DISKNAME=${DISKNAME:=sda}
 
 clean_debian() {
 	[ "$MNT_DIR" != "" ] && chroot $MNT_DIR umount /proc/ /sys/ /dev/ /boot/
@@ -111,8 +115,8 @@ debootstrap --include=$INCLUDES $* $RELEASE $MNT_DIR $MIRROR || fail "cannot ins
 
 echo "Configuring system..."
 cat <<EOF > $MNT_DIR/etc/fstab
-/dev/vda1 /boot               ext4    sync 0       2
-/dev/vda2 /                   ext4    errors=remount-ro 0       1
+/dev/${DISKNAME}1 /boot               ext4    sync 0       2
+/dev/${DISKNAME}2 /                   ext4    errors=remount-ro 0       1
 EOF
 
 echo $HOSTNAME > $MNT_DIR/etc/hostname
@@ -142,14 +146,11 @@ chroot $MNT_DIR grub-install $DISK || fail "cannot install grub"
 chroot $MNT_DIR update-grub || fail "cannot update grub"
 chroot $MNT_DIR apt-get clean || fail "unable to clean apt cache"
 
-sed -i "s|${DISK}p1|/dev/vda1|g" $MNT_DIR/boot/grub/grub.cfg
-sed -i "s|${DISK}p2|/dev/vda2|g" $MNT_DIR/boot/grub/grub.cfg
+sed -i "s|${DISK}p1|/dev/${DISKNAME}1|g" $MNT_DIR/boot/grub/grub.cfg
+sed -i "s|${DISK}p2|/dev/${DISKNAME}2|g" $MNT_DIR/boot/grub/grub.cfg
 
-echo "Enter root password:"
-while ! chroot $MNT_DIR passwd root
-do
-	echo "Try again"
-done
+# Set root password
+echo "root:${ROOTPASSWD}" | chroot $MNT_DIR chpasswd
 
 echo "Finishing grub installation..."
 grub-install $DISK --root-directory=$MNT_DIR --modules="biosdisk part_msdos" || fail "cannot reinstall grub"

@@ -5,6 +5,8 @@ set -e
 # Example usage:
 # - use local APT cache, and set-up serial console
 #   MIRROR="http://localhost:9999/debian" GRUB_CMDLINE="console=tty0 console=ttyS0" ./qemu-debian-create-image foo.img myhostname stretch
+# - use local APT cache, and set-up serial console, no network interface configuration (default is DHCP)
+#   MIRROR="http://localhost:9999/debian" GRUB_CMDLINE="console=tty0 console=ttyS0" ETH_DEVICE="no" ./qemu-debian-create-image foo.img myhostname stretch
 # Then start with:
 #  kvm -hda foo.img -net nic -net user -m 256 -serial stdio
 
@@ -141,9 +143,13 @@ EOF
 cat <<EOF > $MNT_DIR/etc/network/interfaces
 auto lo
 iface lo inet loopback
+EOF
+if [ "$ETH_DEVICE" != "no" ]; then
+	cat <<EOF > $MNT_DIR/etc/network/interfaces
 auto ${ETH_DEVICE}
 iface ${ETH_DEVICE} inet dhcp
 EOF
+fi
 
 mount --bind /dev/ $MNT_DIR/dev || fail "cannot bind /dev"
 chroot $MNT_DIR mount -t ext4 ${DISK}p1 /boot || fail "cannot mount /boot"

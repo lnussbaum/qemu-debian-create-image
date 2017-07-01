@@ -22,6 +22,7 @@ IMGSIZE=${IMGSIZE:=8G}
 ROOTPASSWD=${ROOTPASSWD:=root}
 DISKNAME=${DISKNAME:=sda}
 GRUB_CMDLINE=${GRUB_CMDLINE:=quiet}
+ETH_DEVICE=${ETH_DEVICE:=ens3}
 
 clean_debian() {
 	[ "$MNT_DIR" != "" ] && chroot $MNT_DIR umount /proc/ /sys/ /dev/ /boot/
@@ -140,8 +141,8 @@ EOF
 cat <<EOF > $MNT_DIR/etc/network/interfaces
 auto lo
 iface lo inet loopback
-auto eth0
-iface eth0 inet dhcp
+auto ${ETH_DEVICE}
+iface ${ETH_DEVICE} inet dhcp
 EOF
 
 mount --bind /dev/ $MNT_DIR/dev || fail "cannot bind /dev"

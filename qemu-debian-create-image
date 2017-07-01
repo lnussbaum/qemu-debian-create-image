@@ -11,7 +11,7 @@ set -e
 # Configs overwritable via environment variables
 VSYSTEM=${VSYSTEM:=qemu}						# Either 'qemu' or 'kvm'
 FLAVOUR=${FLAVOUR:=debian}					# Either 'debian' or 'ubuntu'
-INCLUDES=${INCLUDES:="less,vim,sudo,openssh-server,acpid"}
+INCLUDES=${INCLUDES:="less,vim,sudo,openssh-server"}
 MIRROR=${MIRROR:="http://deb.debian.org/debian"}
 #MIRROR=${MIRROR:="http://localhost:3142/debian"}
 #MIRROR=${MIRROR:="http://archive.ubuntu.com/ubuntu/"}

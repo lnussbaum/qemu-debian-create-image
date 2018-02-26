@@ -38,10 +38,12 @@ for more detail.
    *   [Lucas Nussbaum -- @lnussbaum](https://github.com/lnussbaum) in
        [gist](https://gist.github.com/lnussbaum/34e97071827361e344acd8529b9564d8)
 
+   also assumed to be released under GPL 2 or later.
+
 *  Turned into a [git
    repo](https://github.com/lnussbaum/qemu-debian-create-image)
    by [Lucas Nussbaum -- @lnussbaum](https://github.com/lnussbaum), with
-   additional changes.
+   additional changes (also assumed to be released under GPL 2 or later).
 
 *  Other modified versions of [original
    gist](https://gist.github.com/spectra/10301941) (not included in

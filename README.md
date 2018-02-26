@@ -6,7 +6,7 @@ Linux `.qcow2` disk image using `debootstrap` and `nbd`.
 
 ## Usage
 
-    sudo apt-get install debootstrap qemu-utils
+    sudo apt-get install debootstrap qemu-utils util-linux
     qemu-img create -f qcow2 debian-test.qcow2 16G
     ./qemu-debian-create-image debian-test.qcow2 debian-test.hostname wheezy
 

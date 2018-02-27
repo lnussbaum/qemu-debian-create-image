@@ -6,12 +6,28 @@ Linux `.qcow2` disk image using `debootstrap` and `nbd`.
 
 ## Usage
 
-    sudo apt-get install debootstrap qemu-utils util-linux
-    qemu-img create -f qcow2 debian-test.qcow2 16G
-    ./qemu-debian-create-image debian-test.qcow2 debian-test.hostname wheezy
+    sudo apt-get install debootstrap qemu-utils util-linux debian-archive-keyring
+    export FLAVOUR={debian|ubuntu}   # default: debian
+    export ARCH={amd64|...}          # default: amd64
+    export MIRROR=...                # default: http://deb.debian.org/debian
+    export IMGSIZE=...               # default: 8G
+    qemu-debian-create-image debian-test.qcow2 debian-test.hostname stretch
+
+Any additional arguments will be passed through to `debootstrap`.
 
 See [blog post by Kamil Trzcinski](https://ayufan.eu/projects/debootstrap-kvm/)
-for more detail.
+for more detail.  Note that this version of the script will also create
+the initial disk image for you (of `IMGSIZE` size) so it is nearly fully
+automated.
+
+`apt-cacher-ng` can be used to reduce the download requirements by
+specifying a `MIRROR` value like:
+
+    http://localhost:3142/us.archive.ubuntu.com/ubuntu/
+
+and with that style of `MIRROR` value [should allow running offline
+providing all packages are
+cached](https://askubuntu.com/questions/958795/how-do-i-use-debootstrap-with-apt-cacher-ng).
 
 ## History
 

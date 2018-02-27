@@ -169,7 +169,7 @@ sed -i "s|${DISK}p2|/dev/${DISKNAME}2|g" $MNT_DIR/boot/grub/grub.cfg
 echo "root:${ROOTPASSWD}" | chroot $MNT_DIR chpasswd
 
 echo "Finishing grub installation..."
-grub-install $DISK --root-directory=$MNT_DIR --modules="biosdisk part_msdos" || fail "cannot reinstall grub"
+chroot $MNT_DIR grub-install $DISK --modules="biosdisk part_msdos" --target=i386-pc || fail "cannot reinstall grub"
 
 echo "SUCCESS!"
 clean_debian
